@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bouquet Builder 💐</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: url("https://i.postimg.cc/kGBhPcg8/background.png") center center / cover no-repeat fixed;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+/* Controls */
+.controls {
+  position: fixed;
+  top: 10px;
+  width: 100%;
+  text-align: center;
+  z-index: 1000;
+  padding: 5px;
+}
+
+button {
+  margin: 4px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  background: #6d4c41;
+  color: white;
+}
+
+/* Bouquet */
+#bouquet-area {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 85%;
+}
+
+/* Flowers */
+.flower {
+  position: absolute;
+  width: 240px;
+  cursor: grab;
+  transition: transform 0.2s ease;
+  filter: drop-shadow(0px 10px 18px rgba(0,0,0,0.18));
+}
+
+.flower.selected {
+  outline: 3px dashed #6d4c41;
+}
+
+/* Bottom centered text */
+.message {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #5d4037;
+  text-shadow:
+    0px 1px 0px rgba(255,255,255,0.6),
+    0px 4px 12px rgba(93,64,55,0.25);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .flower {
+    width: 160px;
+  }
+
+  .message {
+    font-size: 20px;
+  }
+
+  button {
+    font-size: 10px;
+    padding: 5px 6px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="controls">
+  <button onclick="addFlower('daisy')">Daisy</button>
+  <button onclick="addFlower('sunflower')">Sunflower</button>
+  <button onclick="addFlower('hydrangea')">Hydrangea</button>
+  <button onclick="addFlower('lily')">Lily</button>
+  <button onclick="addFlower('white-rose')">White Rose</button>
+  <button onclick="addFlower('red-rose')">Red Rose</button>
+  <button onclick="addFlower('yellow-rose')">Yellow Rose</button>
+  <button onclick="addFlower('dandelion')">Dandelion</button>
+
+  <button onclick="addFlower('greenery')">Greenery</button>
+  <button onclick="addFlower('greenery1')">Greenery 1</button>
+  <button onclick="addFlower('greenery2')">Greenery 2</button>
+
+  <button onclick="rotateLeft()">Rotate ⟲</button>
+  <button onclick="rotateRight()">Rotate ⟳</button>
+
+  <button onclick="bringForward()">Layer ↑</button>
+  <button onclick="sendBackward()">Layer ↓</button>
+
+  <button onclick="deleteSelected()">Delete</button>
+  <button onclick="undoFlower()">Undo</button>
+  <button onclick="clearBouquet()">Clear All</button>
+</div>
+
+<div id="bouquet-area"></div>
+
+<div class="message">
+  I love you from Fatin ❤️
+</div>
+
+<script>
+const flowerImages = {
+  "daisy": "https://i.postimg.cc/fW1hTtQk/daisy.png",
+  "dandelion": "https://i.postimg.cc/59DMNYWB/dandelion.png",
+  "hydrangea": "https://i.postimg.cc/ZYWSSPgQ/hydrangea.png",
+  "lily": "https://i.postimg.cc/1tYJBqrw/lily.png",
+  "red-rose": "https://i.postimg.cc/JnhpjqJF/red_rose.png",
+  "white-rose": "https://i.postimg.cc/ZRqw6cpd/white_rose.png",
+  "yellow-rose": "https://i.postimg.cc/pdC097hv/yellow_rose.png",
+  "sunflower": "https://i.postimg.cc/nVXJJK55/sunflower.png",
+  "greenery": "https://i.postimg.cc/1zsC3PzD/Greenery.png",
+  "greenery1": "https://i.postimg.cc/hGsCJwJy/Greenery1.png",
+  "greenery2": "https://i.postimg.cc/N0DNyVyP/Greenery2.png"
+};
+
+let addedFlowers = [];
+let selectedFlower = null;
+let highestZ = 1;
+
+function addFlower(type) {
+  const img = document.createElement("img");
+  img.src = flowerImages[type];
+  img.className = "flower";
+  img.dataset.rotation = 0;
+
+  img.style.left = Math.random() * (window.innerWidth - 260) + "px";
+  img.style.top = Math.random() * (window.innerHeight - 350) + "px";
+
+  highestZ++;
+  img.style.zIndex = highestZ;
+
+  img.addEventListener("click", function(e){
+    e.stopPropagation();
+    selectFlower(img);
+  });
+
+  makeDraggable(img);
+  document.getElementById("bouquet-area").appendChild(img);
+  addedFlowers.push(img);
+}
+
+function selectFlower(el) {
+  if (selectedFlower) selectedFlower.classList.remove("selected");
+  selectedFlower = el;
+  selectedFlower.classList.add("selected");
+}
+
+document.addEventListener("click", function(){
+  if (selectedFlower) {
+    selectedFlower.classList.remove("selected");
+    selectedFlower = null;
+  }
+});
+
+function rotateLeft() {
+  if (!selectedFlower) return;
+  let rotation = parseInt(selectedFlower.dataset.rotation);
+  rotation -= 15;
+  selectedFlower.dataset.rotation = rotation;
+  selectedFlower.style.transform = `rotate(${rotation}deg)`;
+}
+
+function rotateRight() {
+  if (!selectedFlower) return;
+  let rotation = parseInt(selectedFlower.dataset.rotation);
+  rotation += 15;
+  selectedFlower.dataset.rotation = rotation;
+  selectedFlower.style.transform = `rotate(${rotation}deg)`;
+}
+
+function bringForward() {
+  if (!selectedFlower) return;
+  highestZ++;
+  selectedFlower.style.zIndex = highestZ;
+}
+
+function sendBackward() {
+  if (!selectedFlower) return;
+  let currentZ = parseInt(selectedFlower.style.zIndex) || 1;
+  selectedFlower.style.zIndex = Math.max(1, currentZ - 1);
+}
+
+function deleteSelected() {
+  if (!selectedFlower) return;
+  selectedFlower.remove();
+  addedFlowers = addedFlowers.filter(f => f !== selectedFlower);
+  selectedFlower = null;
+}
+
+function undoFlower() {
+  if (addedFlowers.length > 0) {
+    const lastFlower = addedFlowers.pop();
+    lastFlower.remove();
+  }
+}
+
+function clearBouquet() {
+  addedFlowers.forEach(f => f.remove());
+  addedFlowers = [];
+  selectedFlower = null;
+}
+
+function makeDraggable(el) {
+  let offsetX = 0, offsetY = 0;
+  let isDragging = false;
+
+  el.addEventListener("mousedown", startDrag);
+  document.addEventListener("mousemove", drag);
+  document.addEventListener("mouseup", endDrag);
+
+  el.addEventListener("touchstart", startDragTouch, { passive: false });
+  document.addEventListener("touchmove", dragTouch, { passive: false });
+  document.addEventListener("touchend", endDrag);
+
+  function startDrag(e) {
+    isDragging = true;
+    offsetX = e.clientX - el.offsetLeft;
+    offsetY = e.clientY - el.offsetTop;
+  }
+
+  function drag(e) {
+    if (!isDragging) return;
+    el.style.left = (e.clientX - offsetX) + "px";
+    el.style.top = (e.clientY - offsetY) + "px";
+  }
+
+  function startDragTouch(e) {
+    e.preventDefault();
+    isDragging = true;
+    const touch = e.touches[0];
+    offsetX = touch.clientX - el.offsetLeft;
+    offsetY = touch.clientY - el.offsetTop;
+  }
+
+  function dragTouch(e) {
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    el.style.left = (touch.clientX - offsetX) + "px";
+    el.style.top = (touch.clientY - offsetY) + "px";
+  }
+
+  function endDrag() {
+    isDragging = false;
+  }
+}
+</script>
+
+</body>
+</html>
