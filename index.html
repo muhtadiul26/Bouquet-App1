@@ -1,17 +1,14 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Bouquet Builder 💐</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -25,7 +22,6 @@ body {
   overflow: hidden;
 }
 
-/* Controls */
 .controls {
   position: fixed;
   top: 10px;
@@ -46,7 +42,6 @@ button {
   color: white;
 }
 
-/* Bouquet */
 #bouquet-area {
   position: absolute;
   bottom: 0;
@@ -54,10 +49,9 @@ button {
   height: 85%;
 }
 
-/* Flowers */
 .flower {
   position: absolute;
-  width: 240px;
+  width: 220px;
   cursor: grab;
   transition: transform 0.2s ease;
   filter: drop-shadow(0px 10px 18px rgba(0,0,0,0.18));
@@ -67,7 +61,6 @@ button {
   outline: 3px dashed #6d4c41;
 }
 
-/* Bottom centered text */
 .message {
   position: fixed;
   bottom: 20px;
@@ -82,20 +75,10 @@ button {
     0px 4px 12px rgba(93,64,55,0.25);
 }
 
-/* Mobile adjustments */
 @media (max-width: 768px) {
-  .flower {
-    width: 160px;
-  }
-
-  .message {
-    font-size: 20px;
-  }
-
-  button {
-    font-size: 10px;
-    padding: 5px 6px;
-  }
+  .flower { width: 150px; }
+  .message { font-size: 20px; }
+  button { font-size: 10px; padding: 5px 6px; }
 }
 </style>
 </head>
@@ -103,71 +86,72 @@ button {
 <body>
 
 <div class="controls">
-  <button onclick="addFlower('daisy')">Daisy</button>
-  <button onclick="addFlower('sunflower')">Sunflower</button>
-  <button onclick="addFlower('hydrangea')">Hydrangea</button>
-  <button onclick="addFlower('lily')">Lily</button>
-  <button onclick="addFlower('white-rose')">White Rose</button>
-  <button onclick="addFlower('red-rose')">Red Rose</button>
-  <button onclick="addFlower('yellow-rose')">Yellow Rose</button>
-  <button onclick="addFlower('dandelion')">Dandelion</button>
 
-  <button onclick="addFlower('greenery')">Greenery</button>
-  <button onclick="addFlower('greenery1')">Greenery 1</button>
-  <button onclick="addFlower('greenery2')">Greenery 2</button>
+<button onclick="addFlower('daisy')">Daisy</button>
+<button onclick="addFlower('sunflower')">Sunflower</button>
+<button onclick="addFlower('hydrangea')">Hydrangea</button>
+<button onclick="addFlower('lily')">Lily</button>
+<button onclick="addFlower('whiteRose')">White Rose</button>
+<button onclick="addFlower('redRose')">Red Rose</button>
+<button onclick="addFlower('yellowRose')">Yellow Rose</button>
+<button onclick="addFlower('dandelion')">Dandelion</button>
+<button onclick="addFlower('greenery')">Greenery</button>
+<button onclick="addFlower('greenery1')">Greenery 1</button>
+<button onclick="addFlower('greenery2')">Greenery 2</button>
 
-  <button onclick="rotateLeft()">Rotate ⟲</button>
-  <button onclick="rotateRight()">Rotate ⟳</button>
+<!-- NEW FLOWERS -->
+<button onclick="addFlower('anemone')">Anemone (White)</button>
+<button onclick="addFlower('peony')">Peony</button>
 
-  <button onclick="bringForward()">Layer ↑</button>
-  <button onclick="sendBackward()">Layer ↓</button>
+<br>
 
-  <button onclick="deleteSelected()">Delete</button>
-  <button onclick="undoFlower()">Undo</button>
-  <button onclick="clearBouquet()">Clear All</button>
+<button onclick="rotateLeft()">Rotate ⟲</button>
+<button onclick="rotateRight()">Rotate ⟳</button>
+<button onclick="bringForward()">Layer ↑</button>
+<button onclick="sendBackward()">Layer ↓</button>
+<button onclick="deleteSelected()">Delete</button>
+<button onclick="undoFlower()">Undo</button>
+<button onclick="clearBouquet()">Clear All</button>
+
 </div>
 
 <div id="bouquet-area"></div>
 
 <div class="message">
-  I love you from Fatin ❤️
+I love you from Fatin ❤️
 </div>
 
 <script>
 const flowerImages = {
-  "daisy": "https://i.postimg.cc/fW1hTtQk/daisy.png",
-  "dandelion": "https://i.postimg.cc/59DMNYWB/dandelion.png",
-  "hydrangea": "https://i.postimg.cc/ZYWSSPgQ/hydrangea.png",
-  "lily": "https://i.postimg.cc/1tYJBqrw/lily.png",
-  "red-rose": "https://i.postimg.cc/JnhpjqJF/red_rose.png",
-  "white-rose": "https://i.postimg.cc/ZRqw6cpd/white_rose.png",
-  "yellow-rose": "https://i.postimg.cc/pdC097hv/yellow_rose.png",
-  "sunflower": "https://i.postimg.cc/nVXJJK55/sunflower.png",
-  "greenery": "https://i.postimg.cc/1zsC3PzD/Greenery.png",
-  "greenery1": "https://i.postimg.cc/hGsCJwJy/Greenery1.png",
-  "greenery2": "https://i.postimg.cc/N0DNyVyP/Greenery2.png"
+  daisy: "https://i.postimg.cc/fW1hTtQk/daisy.png",
+  dandelion: "https://i.postimg.cc/59DMNYWB/dandelion.png",
+  hydrangea: "https://i.postimg.cc/ZYWSSPgQ/hydrangea.png",
+  lily: "https://i.postimg.cc/1tYJBqrw/lily.png",
+  redRose: "https://i.postimg.cc/JnhpjqJF/red_rose.png",
+  whiteRose: "https://i.postimg.cc/ZRqw6cpd/white_rose.png",
+  yellowRose: "https://i.postimg.cc/pdC097hv/yellow_rose.png",
+  sunflower: "https://i.postimg.cc/nVXJJK55/sunflower.png",
+  greenery: "https://i.postimg.cc/1zsC3PzD/Greenery.png",
+  greenery1: "https://i.postimg.cc/hGsCJwJy/Greenery1.png",
+  greenery2: "https://i.postimg.cc/N0DNyVyP/Greenery2.png",
+
+  anemone: "https://i.postimg.cc/zfb8zn29/Anemone-white.png",
+  peony: "https://i.postimg.cc/cCmN9T6s/Peonies.png"
 };
 
-let addedFlowers = [];
 let selectedFlower = null;
 let highestZ = 1;
+let addedFlowers = [];
 
 function addFlower(type) {
   const img = document.createElement("img");
   img.src = flowerImages[type];
   img.className = "flower";
-  img.dataset.rotation = 0;
+  img.dataset.rotation = "0";
 
-  img.style.left = Math.random() * (window.innerWidth - 260) + "px";
+  img.style.left = Math.random() * (window.innerWidth - 240) + "px";
   img.style.top = Math.random() * (window.innerHeight - 350) + "px";
-
-  highestZ++;
-  img.style.zIndex = highestZ;
-
-  img.addEventListener("click", function(e){
-    e.stopPropagation();
-    selectFlower(img);
-  });
+  img.style.zIndex = ++highestZ;
 
   makeDraggable(img);
   document.getElementById("bouquet-area").appendChild(img);
@@ -180,7 +164,9 @@ function selectFlower(el) {
   selectedFlower.classList.add("selected");
 }
 
-document.addEventListener("click", function(){
+document.querySelector(".controls").addEventListener("click", e => e.stopPropagation());
+
+document.getElementById("bouquet-area").addEventListener("click", () => {
   if (selectedFlower) {
     selectedFlower.classList.remove("selected");
     selectedFlower = null;
@@ -189,30 +175,27 @@ document.addEventListener("click", function(){
 
 function rotateLeft() {
   if (!selectedFlower) return;
-  let rotation = parseInt(selectedFlower.dataset.rotation);
-  rotation -= 15;
-  selectedFlower.dataset.rotation = rotation;
-  selectedFlower.style.transform = `rotate(${rotation}deg)`;
+  let r = parseInt(selectedFlower.dataset.rotation) - 15;
+  selectedFlower.dataset.rotation = r;
+  selectedFlower.style.transform = "rotate(" + r + "deg)";
 }
 
 function rotateRight() {
   if (!selectedFlower) return;
-  let rotation = parseInt(selectedFlower.dataset.rotation);
-  rotation += 15;
-  selectedFlower.dataset.rotation = rotation;
-  selectedFlower.style.transform = `rotate(${rotation}deg)`;
+  let r = parseInt(selectedFlower.dataset.rotation) + 15;
+  selectedFlower.dataset.rotation = r;
+  selectedFlower.style.transform = "rotate(" + r + "deg)";
 }
 
 function bringForward() {
   if (!selectedFlower) return;
-  highestZ++;
-  selectedFlower.style.zIndex = highestZ;
+  selectedFlower.style.zIndex = ++highestZ;
 }
 
 function sendBackward() {
   if (!selectedFlower) return;
-  let currentZ = parseInt(selectedFlower.style.zIndex) || 1;
-  selectedFlower.style.zIndex = Math.max(1, currentZ - 1);
+  let z = parseInt(selectedFlower.style.zIndex);
+  selectedFlower.style.zIndex = Math.max(1, z - 1);
 }
 
 function deleteSelected() {
@@ -223,10 +206,9 @@ function deleteSelected() {
 }
 
 function undoFlower() {
-  if (addedFlowers.length > 0) {
-    const lastFlower = addedFlowers.pop();
-    lastFlower.remove();
-  }
+  if (addedFlowers.length === 0) return;
+  const last = addedFlowers.pop();
+  last.remove();
 }
 
 function clearBouquet() {
@@ -238,47 +220,50 @@ function clearBouquet() {
 function makeDraggable(el) {
   let offsetX = 0, offsetY = 0;
   let isDragging = false;
+  let moved = false;
 
-  el.addEventListener("mousedown", startDrag);
-  document.addEventListener("mousemove", drag);
-  document.addEventListener("mouseup", endDrag);
-
-  el.addEventListener("touchstart", startDragTouch, { passive: false });
-  document.addEventListener("touchmove", dragTouch, { passive: false });
-  document.addEventListener("touchend", endDrag);
-
-  function startDrag(e) {
+  el.addEventListener("mousedown", e => {
     isDragging = true;
+    moved = false;
+    selectFlower(el);
     offsetX = e.clientX - el.offsetLeft;
     offsetY = e.clientY - el.offsetTop;
-  }
+  });
 
-  function drag(e) {
+  document.addEventListener("mousemove", e => {
     if (!isDragging) return;
+    moved = true;
     el.style.left = (e.clientX - offsetX) + "px";
     el.style.top = (e.clientY - offsetY) + "px";
-  }
+  });
 
-  function startDragTouch(e) {
-    e.preventDefault();
-    isDragging = true;
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+  });
+
+  el.addEventListener("touchstart", e => {
     const touch = e.touches[0];
+    isDragging = true;
+    moved = false;
+    selectFlower(el);
     offsetX = touch.clientX - el.offsetLeft;
     offsetY = touch.clientY - el.offsetTop;
-  }
+  });
 
-  function dragTouch(e) {
+  document.addEventListener("touchmove", e => {
     if (!isDragging) return;
+    moved = true;
     const touch = e.touches[0];
     el.style.left = (touch.clientX - offsetX) + "px";
     el.style.top = (touch.clientY - offsetY) + "px";
-  }
+  });
 
-  function endDrag() {
+  document.addEventListener("touchend", () => {
     isDragging = false;
-  }
+  });
 }
 </script>
 
 </body>
 </html>
+
